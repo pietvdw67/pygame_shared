@@ -17,32 +17,27 @@ class ImagePacker:
         screen = pygame.display.set_mode((screen_width, screen_height))
 
     def pack(self, source_folder, target_file, cols_text, rows_text):
-        cols = int(cols_text)
-        rows = int(rows_text)
 
-        entries = os.listdir(source_folder)
-        images_list = []
-        max_height = 0
-        max_width = 0
-        for entry in entries:
-            file_name = os.path.join(source_folder, entry)
-            image = pygame.image.load(file_name).convert_alpha()
-            images_list.append(image)
-            if image.get_height() > max_height:
-                max_height = image.get_height()
-            if image.get_width() > max_width:
-                max_width = image.get_width()
+        try:
+            cols = int(cols_text)
+            rows = int(rows_text)
+            current_index = 0
+            images_list = []
 
+            max_width, max_height = ImagePacker.get_tile_width_and_height(source_folder)
+            entries = os.listdir(source_folder)
+            image_target = pygame.Surface((max_width * cols, max_height * rows), pygame.SRCALPHA)
 
-        image_target = pygame.Surface((max_width * cols, max_height * rows), pygame.SRCALPHA)
-        current_index = 0
-        for row in range(rows):
-            for col in range(cols):
-                if current_index < len(images_list):
-                    image_target.blit(images_list[current_index], (col * max_height, row*max_height))
-                    current_index += 1
+            for row in range(rows):
+                for col in range(cols):
+                    if current_index < len(entries):
+                        image = pygame.image.load(os.path.join(source_folder, entries[current_index]))
+                        image_target.blit(image, (col * max_width, row*max_height))
+                        current_index += 1
 
-        pygame.image.save(image_target, target_file)
+            pygame.image.save(image_target, target_file)
+        except Exception as e:
+            print(e)
 
         pygame.quit()
         return f'Output file created, tile size is Width: {max_width}, Height: {max_height}'
@@ -58,6 +53,18 @@ class ImagePacker:
 
         return columns, rows
 
+    @staticmethod
+    def get_tile_width_and_height(source_folder):
+        entries = os.listdir(source_folder)
+        max_height = 0
+        max_width = 0
+        for entry in entries:
+            file_name = os.path.join(source_folder, entry)
+            image = pygame.image.load(file_name)
+            max_height = max(max_height, image.get_height())
+            max_width = max(max_width, image.get_width())
+
+        return max_width, max_height
 
 if __name__ == '__main__':
     result = ImagePacker().pack(ImagePacker.SOURCE_FOLDER, ImagePacker.TARGET_FILE, ImagePacker.OUTPUT_COL,ImagePacker.OUTPUT_ROW)

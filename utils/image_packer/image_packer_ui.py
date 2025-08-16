@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import (
 )
 
 from pygame_shared.utils.image_utils import ImageUtils
+from pygame_shared.utils.image_packer.image_packer import ImagePacker
 
 
 class ImagePackerUI(QMainWindow):
@@ -52,6 +53,23 @@ class ImagePackerUI(QMainWindow):
         spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         horizontal_container.addWidget(label)
         horizontal_container.addWidget(self.lbl_image_count)
+        horizontal_container.addItem(spacer)
+        main_layout.addLayout(horizontal_container)
+
+        horizontal_container = QHBoxLayout()
+        label = QLabel("Tile Width")
+        label.setFixedWidth(ImagePackerUI.LABEL_WIDTH)
+        self.lbl_tile_width = QLabel("0")
+        self.lbl_tile_width.setFixedWidth(ImagePackerUI.LABEL_WIDTH)
+        label2 = QLabel("Tile Height")
+        label2.setFixedWidth(ImagePackerUI.LABEL_WIDTH)
+        self.lbl_tile_height = QLabel("0")
+        self.lbl_tile_height.setFixedWidth(ImagePackerUI.LABEL_WIDTH)
+        spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        horizontal_container.addWidget(label)
+        horizontal_container.addWidget(self.lbl_tile_width)
+        horizontal_container.addWidget(label2)
+        horizontal_container.addWidget(self.lbl_tile_height)
         horizontal_container.addItem(spacer)
         main_layout.addLayout(horizontal_container)
 
@@ -104,6 +122,7 @@ class ImagePackerUI(QMainWindow):
         self.btn_pack.clicked.connect(self.btn_pack_clicked)
 
     def btn_get_source_clicked(self):
+
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.Directory)
         clicked_button = file_dialog.exec()
@@ -112,6 +131,11 @@ class ImagePackerUI(QMainWindow):
             self.edit_source.setText(selected_files[0])
             entries = os.listdir(selected_files[0])
             self.lbl_image_count.setText(str(len(entries)))
+
+            tile_width, tile_height = ImagePacker.get_tile_width_and_height(selected_files[0])
+            self.lbl_tile_width.setText(str(tile_width))
+            self.lbl_tile_height.setText(str(tile_height))
+
             cols, rows = ImagePacker.get_suggested_layout(len(entries))
             self.edit_cols.setText(str(cols))
             self.edit_rows.setText(str(rows))

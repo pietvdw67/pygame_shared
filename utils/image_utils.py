@@ -33,11 +33,13 @@ class ImageUtils:
         return image
 
     @staticmethod
-    def get_animation_frames_from_sprite_sheet(sheet_name='', width=0, height=0, rows=1, cols=1, scale=2, flip_horizontal=False):
+    def get_animation_frames_from_sprite_sheet(sheet_name='', width=0, height=0, rows=1, cols=1,
+                                               amount=-1, scale=2, flip_horizontal=False):
         """
         Extract all the frames of an animation from a sprite sheet
+        :param flip_horizontal:
+        :param amount:
         :param sheet_name:
-        :param sheet:
         :param width:
         :param height:
         :param rows:
@@ -48,14 +50,16 @@ class ImageUtils:
 
         if width == 0 or height == 0:
             sprite_sheet_image = pygame.image.load(sheet_name).convert_alpha()
-            width = sprite_sheet_image.get_width() / cols
-            height = sprite_sheet_image.get_height() / rows
+            width = sprite_sheet_image.get_width() // cols
+            height = sprite_sheet_image.get_height() // rows
         images = []
-        for col in range(cols):
-            for row in range(rows):
-                image = ImageUtils.get_image_from_sprite_sheet(sheet_name, col * width,row * height, col * width + width, height, scale)
+        for row in range(rows):
+            for col in range(cols):
+                image = ImageUtils.get_image_from_sprite_sheet(sheet_name, col * width, row * height, col * width + width, row * height + height, scale)
                 if flip_horizontal:
                     image = pygame.transform.flip(image, True, False)
                 images.append(image)
 
+        if amount > -1:
+            images = images[:amount]
         return images
