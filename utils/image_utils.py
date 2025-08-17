@@ -19,7 +19,7 @@ class ImageUtils:
         image.fill(color_key)
 
         # Draw the section of the sheet onto the blank image
-        image.blit( sheet_surface, (0, 0), (start_x, start_y, end_x, end_y))
+        image.blit(sheet_surface, (0, 0), (start_x, start_y, end_x, end_y))
 
         # Remove the transparent color
         image.set_colorkey(color_key)

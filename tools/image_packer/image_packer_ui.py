@@ -15,8 +15,7 @@ from PyQt6.QtWidgets import (
     QMessageBox
 )
 
-from pygame_shared.utils.image_utils import ImageUtils
-from pygame_shared.utils.image_packer.image_packer import ImagePacker
+from pygame_shared.tools.image_packer.image_packer import ImagePacker
 
 
 class ImagePackerUI(QMainWindow):
